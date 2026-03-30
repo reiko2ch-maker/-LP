@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>noteメンバーシップ | 先着限定 AIシステム モニター特典</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0e;
+    --surface: #111114;
+    --surface2: #18181d;
+    --border: #242428;
+    --border-gold: rgba(196,155,80,0.3);
+    --text: #e8e6e0;
+    --text-muted: #6a6860;
+    --text-sub: #9a9890;
+    --accent: #c9302a;
+    --accent-soft: rgba(201,48,42,0.08);
+    --gold: #c49b50;
+    --gold-bright: #e0b86a;
+    --gold-soft: rgba(196,155,80,0.08);
+    --gold-mid: rgba(196,155,80,0.15);
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+body {
+font-family: ‘Noto Sans JP’, sans-serif;
+background: #0c0c0e;
+color: #e8e6e0;
+line-height: 1.75;
+font-size: 15px;
+-webkit-font-smoothing: antialiased;
+}
+
+/* EMERGENCY BANNER */
+.emergency-bar {
+background: #c9302a;
+color: #fff;
+text-align: center;
+padding: 11px 20px;
+font-size: 12.5px;
+font-weight: 600;
+letter-spacing: 0.04em;
+position: sticky;
+top: 0;
+z-index: 200;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 14px;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.eb-dot {
+width: 7px; height: 7px;
+background: #fff;
+border-radius: 50%;
+animation: blink 1s ease-in-out infinite;
+flex-shrink: 0;
+}
+
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+#timer {
+font-family: ‘Space Mono’, monospace;
+font-weight: 700;
+font-size: 14px;
+letter-spacing: 0.1em;
+background: rgba(0,0,0,0.2);
+padding: 2px 12px;
+border-radius: 3px;
+border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* HERO */
+.hero {
+max-width: 740px;
+margin: 0 auto;
+padding: 64px 28px 48px;
+border-bottom: 1px solid #242428;
+}
+
+.hero-kicker {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.2em;
+color: #c49b50;
+text-transform: uppercase;
+margin-bottom: 22px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.hero-kicker::before, .hero-kicker::after {
+content: ‘’;
+display: block;
+height: 1px;
+width: 24px;
+background: #c49b50;
+opacity: 0.5;
+}
+
+.hero h1 {
+font-family: ‘Noto Serif JP’, serif;
+font-size: clamp(26px, 5vw, 40px);
+font-weight: 700;
+line-height: 1.25;
+letter-spacing: -0.01em;
+margin-bottom: 20px;
+color: #f0ede6;
+}
+
+.hero h1 .gold-line { display: block; color: #e0b86a; }
+
+.hero-sub {
+font-size: 14px;
+color: #9a9890;
+max-width: 500px;
+line-height: 1.8;
+margin-bottom: 28px;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.htag {
+font-size: 10.5px; font-weight: 500;
+letter-spacing: 0.06em;
+padding: 4px 12px;
+border-radius: 2px;
+border: 1px solid;
+}
+.htag.red { background: rgba(201,48,42,0.08); color: #e05a55; border-color: rgba(201,48,42,0.25); }
+.htag.gold { background: rgba(196,155,80,0.08); color: #c49b50; border-color: rgba(196,155,80,0.3); }
+.htag.dim { background: transparent; color: #6a6860; border-color: #242428; }
+
+/* PAGE */
+.page { max-width: 740px; margin: 0 auto; padding: 0 28px 100px; }
+
+/* SEATS */
+.seats-block {
+background: #18181d;
+border: 1px solid rgba(196,155,80,0.3);
+border-radius: 6px;
+padding: 22px 24px;
+margin: 36px 0 0;
+}
+
+.seats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+
+.seats-label {
+font-size: 11px; font-weight: 700;
+letter-spacing: 0.12em; text-transform: uppercase;
+color: #c49b50;
+font-family: ‘Space Mono’, monospace;
+}
+
+.seats-count { font-family: ‘Space Mono’, monospace; font-size: 12px; color: #6a6860; }
+.seats-count span { color: #c9302a; font-weight: 700; font-size: 14px; }
+
+.progress-rail { background: #242428; border-radius: 2px; height: 5px; overflow: hidden; }
+
+.progress-fill {
+height: 100%; width: 0%;
+background: linear-gradient(90deg, #c49b50 0%, #e0b86a 100%);
+border-radius: 2px;
+transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+position: relative;
+}
+
+.progress-fill::after {
+content: ‘’;
+position: absolute; right: 0; top: 0; bottom: 0;
+width: 20px;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes shimmer { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+
+.seats-note { font-size: 11.5px; color: #6a6860; margin-top: 10px; }
+.seats-note strong { color: #c9302a; }
+
+/* SECTION HEAD */
+.sec-head {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+color: #6a6860;
+margin: 52px 0 20px;
+display: flex; align-items: center; gap: 14px;
+}
+.sec-head::after { content: ‘’; flex: 1; height: 1px; background: #242428; }
+
+/* CALLOUT */
+.callout {
+background: rgba(196,155,80,0.08);
+border: 1px solid rgba(196,155,80,0.3);
+border-left: 3px solid #c49b50;
+border-radius: 4px;
+padding: 18px 20px;
+margin: 28px 0;
+display: flex; gap: 14px; align-items: flex-start;
+}
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.callout-body { font-size: 13.5px; line-height: 1.7; color: #9a9890; }
+.callout-body strong { color: #e0b86a; }
+
+/* TOOL PREVIEW */
+.tool-wrap {
+border: 1px solid #242428; border-radius: 8px; overflow: hidden;
+margin: 20px 0 32px;
+box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+.tool-topbar {
+background: #16161a; padding: 10px 16px;
+display: flex; align-items: center; gap: 7px;
+border-bottom: 1px solid #242428;
+}
+
+.mac-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mac-dot.r { background: #ff5f57; }
+.mac-dot.y { background: #febc2e; }
+.mac-dot.g { background: #28c840; }
+
+.topbar-title {
+font-family: ‘Space Mono’, monospace; font-size: 10.5px;
+color: #404050; margin-left: 8px; letter-spacing: 0.05em;
+}
+
+.tool-body { display: grid; grid-template-columns: 190px 1fr; background: #0d0d10; }
+@media (max-width: 520px) { .tool-body { grid-template-columns: 1fr; } }
+
+.t-side { padding: 20px 16px; border-right: 1px solid #242428; background: #0a0a0d; }
+.t-row { margin-bottom: 16px; }
+.t-key { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #404055; font-family: ‘Space Mono’, monospace; margin-bottom: 3px; }
+.t-val { font-family: ‘Space Mono’, monospace; font-size: 12px; color: #7090e8; }
+.t-val.green { color: #4ec96e; }
+
+.t-main { padding: 22px 20px; }
+
+.t-badge {
+display: inline-block; font-family: ‘Space Mono’, monospace;
+font-size: 9.5px; letter-spacing: 0.1em; color: #7090e8;
+background: rgba(112,144,232,0.1); border: 1px solid rgba(112,144,232,0.2);
+padding: 3px 9px; border-radius: 3px; margin-bottom: 10px;
+}
+
+.t-main h3 { color: #d8daf5; font-size: 15px; font-weight: 600; margin-bottom: 7px; letter-spacing: -0.01em; }
+.t-main p { color: #505470; font-size: 12px; line-height: 1.7; }
+
+/* FEATURES */
+.fg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 40px; }
+@media (max-width: 500px) { .fg { grid-template-columns: 1fr; } }
+
+.fc {
+background: #111114; border: 1px solid #242428;
+border-radius: 6px; padding: 18px;
+transition: border-color 0.2s;
+}
+.fc:hover { border-color: rgba(196,155,80,0.3); }
+.fc-ico { font-size: 20px; margin-bottom: 10px; display: block; }
+.fc-title { font-weight: 600; font-size: 13.5px; margin-bottom: 5px; color: #d5d2cc; }
+.fc-desc { font-size: 12px; color: #6a6860; line-height: 1.65; }
+
+/* STEPS */
+.steps { margin-bottom: 40px; }
+.step { display: flex; gap: 16px; }
+.step-l { display: flex; flex-direction: column; align-items: center; }
+
+.step-n {
+width: 26px; height: 26px; border-radius: 50%;
+background: #18181d; border: 1px solid rgba(196,155,80,0.3);
+color: #c49b50; font-family: ‘Space Mono’, monospace;
+font-size: 11px; font-weight: 700;
+display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.step-line { width: 1px; flex: 1; background: #242428; margin: 5px 0; min-height: 20px; }
+.step:last-child .step-line { display: none; }
+
+.step-r { flex: 1; padding: 2px 0 26px; }
+.step-r strong { font-size: 13.5px; display: block; margin-bottom: 4px; color: #d5d2cc; }
+.step-r p { font-size: 12.5px; color: #6a6860; }
+
+.step-note {
+display: inline-block; font-size: 11px; color: #c49b50;
+background: rgba(196,155,80,0.08); border: 1px solid rgba(196,155,80,0.3);
+padding: 2px 9px; border-radius: 2px; margin-top: 6px;
+font-family: ‘Space Mono’, monospace; letter-spacing: 0.04em;
+}
+
+/* EXCLUSIVE */
+.exclusive {
+background: linear-gradient(145deg, #0e0c08 0%, #161208 50%, #0a0a0a 100%);
+border: 1px solid rgba(196,155,80,0.3);
+border-radius: 8px; padding: 30px 28px; margin: 36px 0;
+position: relative; overflow: hidden;
+}
+
+.exclusive::before {
+content: ‘’; position: absolute; top: -60px; right: -60px;
+width: 200px; height: 200px;
+background: radial-gradient(circle, rgba(196,155,80,0.12) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.exclusive::after {
+content: ‘’; position: absolute; bottom: -40px; left: -40px;
+width: 160px; height: 160px;
+background: radial-gradient(circle, rgba(201,48,42,0.07) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.ex-kicker {
+font-family: ‘Space Mono’, monospace; font-size: 9.5px;
+letter-spacing: 0.2em; text-transform: uppercase; color: #c49b50;
+margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+}
+.ex-kicker::before { content: ‘’; width: 16px; height: 1px; background: #c49b50; opacity: 0.6; }
+
+.ex-title {
+font-family: ‘Noto Serif JP’, serif;
+font-size: 20px; font-weight: 700; line-height: 1.4;
+color: #ede8dc; margin-bottom: 12px;
+}
+
+.ex-body { font-size: 13px; color: #7a7870; line-height: 1.85; margin-bottom: 22px; }
+
+.ex-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ex-tag {
+display: inline-flex; align-items: center; gap: 6px;
+font-size: 11.5px; font-weight: 500;
+padding: 6px 14px; border-radius: 3px; border: 1px solid;
+letter-spacing: 0.03em;
+}
+.ex-tag.danger { background: rgba(201,48,42,0.1); color: #e06055; border-color: rgba(201,48,42,0.3); }
+.ex-tag.gold { background: rgba(196,155,80,0.08); color: #c49b50; border-color: rgba(196,155,80,0.3); }
+
+/* CTA */
+.cta-wrap {
+background: #111114;
+border: 1px solid #242428;
+border-top: 2px solid #c49b50;
+border-radius: 6px; padding: 36px 28px; text-align: center; margin-top: 44px;
+}
+
+.cta-wrap h2 {
+font-family: ‘Noto Serif JP’, serif;
+font-size: clamp(17px, 3.5vw, 22px); font-weight: 700;
+line-height: 1.4; color: #ede8dc; margin-bottom: 10px;
+}
+
+.cta-wrap > p { font-size: 13px; color: #6a6860; margin-bottom: 28px; line-height: 1.7; }
+
+.cta-btn {
+display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+background: #c9302a; color: white; text-decoration: none;
+font-weight: 700; font-size: 14.5px;
+padding: 16px 36px; border-radius: 4px; letter-spacing: 0.04em;
+transition: all 0.2s;
+box-shadow: 0 4px 24px rgba(201,48,42,0.35), 0 0 0 1px rgba(201,48,42,0.2);
+width: 100%; max-width: 400px;
+}
+
+.cta-btn:hover {
+background: #b52920;
+box-shadow: 0 6px 32px rgba(201,48,42,0.5);
+transform: translateY(-1px);
+}
+
+.cta-seats {
+display: inline-flex; align-items: center; gap: 6px;
+font-size: 11.5px; font-weight: 600;
+color: #c9302a; background: rgba(201,48,42,0.08);
+border: 1px solid rgba(201,48,42,0.2);
+padding: 5px 14px; border-radius: 2px; margin-bottom: 20px;
+font-family: ‘Space Mono’, monospace; letter-spacing: 0.04em;
+}
+
+.cta-notes { margin-top: 18px; display: flex; flex-direction: column; gap: 5px; }
+.cta-notes p { font-size: 11px; color: #6a6860; margin-bottom: 0; }
+
+.divider { border: none; border-top: 1px solid #242428; margin: 44px 0; }
+
+.footer {
+text-align: center; font-size: 10.5px; color: #3a3a3a;
+padding: 28px 0 16px; border-top: 1px solid #242428;
+margin-top: 64px; letter-spacing: 0.04em;
+}
+
+/* ANIMATIONS */
+.reveal {
+opacity: 0; transform: translateY(18px);
+animation: reveal 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+
+@keyframes reveal { to { opacity:1; transform:translateY(0); } }
+
+.reveal:nth-child(1) { animation-delay:0.05s; }
+.reveal:nth-child(2) { animation-delay:0.12s; }
+.reveal:nth-child(3) { animation-delay:0.20s; }
+.reveal:nth-child(4) { animation-delay:0.28s; }
+.reveal:nth-child(5) { animation-delay:0.36s; }
+</style>
+
+</head>
+<body>
+
+<div class="emergency-bar">
+  <span class="eb-dot"></span>
+  <span>本日 3/31（今日中）の加入者のみ — 先着30名 モニター特典</span>
+  <span id="timer">--:--:--</span>
+  <span class="eb-dot"></span>
+</div>
+
+<div class="hero">
+  <div class="hero-kicker reveal">Limited Monitor Access — Today Only</div>
+  <h1 class="reveal">
+    noteの記事を、<br>
+    <span class="gold-line">AIが自動で書く時代。</span>
+  </h1>
+  <p class="hero-sub reveal">
+    メンバーシップに加入いただいた方に、開発中のAI自動執筆システムへのモニターアクセスをお渡しします。<br>
+    この機会は、<strong style="color:#e0ddda;">本日限り・先着30名制</strong>です。
+  </p>
+  <div class="hero-tags reveal">
+    <span class="htag red">🔴 本日 23:59 終了</span>
+    <span class="htag gold">✦ 先着 30名 限定</span>
+    <span class="htag dim">AI自動執筆</span>
+    <span class="htag dim">副業・マネタイズ</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="seats-block reveal">
+    <div class="seats-header">
+      <div class="seats-label">Remaining Seats — モニター枠</div>
+      <div class="seats-count">残り <span>7</span> / 30名</div>
+    </div>
+    <div class="progress-rail">
+      <div class="progress-fill" id="prog"></div>
+    </div>
+    <div class="seats-note">
+      <strong>残り7枠のみ。</strong>枠が埋まり次第、本日中であっても特典は終了します。
+    </div>
+  </div>
+
+  <div class="callout reveal">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <strong>3/31（本日）中に加入 かつ 先着30名以内</strong>の方限定で、「note自動リサーチ＆自動執筆システム」のモニター権利を無料プレゼント。明日以降の加入・枠外の方への特典提供はありません。
+    </div>
+  </div>
+
+  <div class="sec-head reveal">What You'll Get — 特典のシステムとは</div>
+
+  <div class="tool-wrap reveal">
+    <div class="tool-topbar">
+      <div class="mac-dot r"></div>
+      <div class="mac-dot y"></div>
+      <div class="mac-dot g"></div>
+      <div class="topbar-title">note AI Platform — Strategic Intelligence</div>
+    </div>
+    <div class="tool-body">
+      <div class="t-side">
+        <div class="t-row"><div class="t-key">Mode</div><div class="t-val">自動執筆</div></div>
+        <div class="t-row"><div class="t-key">Genre</div><div class="t-val">ビジネス</div></div>
+        <div class="t-row"><div class="t-key">Status</div><div class="t-val green">✓ 稼働中</div></div>
+        <div class="t-row"><div class="t-key">Model</div><div class="t-val" style="font-size:10px;">gemini-2.5-flash</div></div>
+      </div>
+      <div class="t-main">
+        <div class="t-badge">STEP 01</div>
+        <h3>トレンドリサーチ</h3>
+        <p>noteの検索上位から競合記事を自動収集し、AIがトレンドを分析。ジャンルを選択するだけで、記事のタネが自動で見つかります。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fg">
+    <div class="fc reveal">
+      <span class="fc-ico">🔍</span>
+      <div class="fc-title">自動トレンドリサーチ</div>
+      <div class="fc-desc">noteの検索上位記事をAIが自動収集。ネタ切れを永久に解消。</div>
+    </div>
+    <div class="fc reveal">
+      <span class="fc-ico">✍️</span>
+      <div class="fc-title">ワンクリック自動執筆</div>
+      <div class="fc-desc">ボタン一つで記事を生成。書く時間を限りなくゼロに近づける。</div>
+    </div>
+    <div class="fc reveal">
+      <span class="fc-ico">📂</span>
+      <div class="fc-title">複数ジャンル対応</div>
+      <div class="fc-desc">ビジネス・副業・恋愛・自己啓発など、ジャンルを選んで即生成。</div>
+    </div>
+    <div class="fc reveal">
+      <span class="fc-ico">⚙️</span>
+      <div class="fc-title">セットアップ簡単</div>
+      <div class="fc-desc">専門知識不要。案内に沿ってAPIキーを設定するだけで動作します。</div>
+    </div>
+  </div>
+
+  <div class="sec-head reveal">How It Works — 加入からシステム入手まで</div>
+
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-l"><div class="step-n">1</div><div class="step-line"></div></div>
+      <div class="step-r">
+        <strong>本日中にメンバーシップへ加入（先着30名限定）</strong>
+        <p>下のボタンからnoteのメンバーシップページへ。加入の時刻・順番が特典の対象条件です。</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <div class="step-l"><div class="step-n">2</div><div class="step-line"></div></div>
+      <div class="step-r">
+        <strong>加入確認 → モニター参加のご案内</strong>
+        <p>対象の方には個別でモニター参加の詳細をお届けします。</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <div class="step-l"><div class="step-n">3</div><div class="step-line"></div></div>
+      <div class="step-r">
+        <strong>システムを受け取り、実際に使う</strong>
+        <p>AIシステムの配布は<strong style="color:#d5d2cc;">4月頭を予定</strong>しています。</p>
+        <span class="step-note">※ 配布時期：4月初旬予定</span>
+      </div>
+    </div>
+    <div class="step reveal">
+      <div class="step-l"><div class="step-n">4</div><div class="step-line"></div></div>
+      <div class="step-r">
+        <strong>フィードバック → 完成版を最優先で入手</strong>
+        <p>モニターの声を反映した完成版を、他の誰よりも先にお届けします。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exclusive reveal">
+    <div class="ex-kicker">Exclusive Benefit — 本日限定</div>
+    <div class="ex-title">
+      先着30名限定<br>AIシステム モニター権利 — 無料進呈
+    </div>
+    <div class="ex-body">
+      このシステムは現在開発・モニター段階にあり、一般公開前のプロダクトです。本日3/31中にメンバーシップへ加入された先着30名の方のみ、正式リリース前にアクセス権をお渡しします。<br><br>
+      明日以降・30名を超えた加入者への特典提供はございません。この案内を目にしたなら、それは今がそのタイミングです。
+    </div>
+    <div class="ex-tags">
+      <span class="ex-tag danger">⏰ 本日 23:59 終了</span>
+      <span class="ex-tag gold">先着 30名 限定</span>
+      <span class="ex-tag gold">4月頭 配布予定</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="cta-wrap reveal">
+    <div class="cta-seats">⚠ 残り 7 / 30 枠</div>
+    <h2>今すぐ加入して、<br>AIシステムを先取りする</h2>
+    <p>本日 3/31 23:59 を過ぎると、モニター特典は完全に終了します。<br>枠が埋まった時点でも即終了となります。</p>
+    <a href="https://note.com/coconala_note/membership/join" target="_blank" class="cta-btn">
+      → メンバーシップに今すぐ加入する
+    </a>
+    <div class="cta-notes">
+      <p>※ モニター特典は 3/31 中の加入かつ先着30名限定です</p>
+      <p>※ システム配布は4月初旬を予定しています</p>
+      <p>※ 利用にはAPIキーのご用意が別途必要です（設定方法はご案内します）</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  © 2026 note AI Platform. This page is for membership guidance purposes only.
+</div>
+
+<script>
+  // Countdown
+  function tick() {
+    const now = new Date();
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    const diff = end - now;
+    if (diff <= 0) { document.getElementById('timer').textContent = '終了'; return; }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('timer').textContent =
+      String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Progress bar
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('prog').style.width = '76.6%';
+    }, 400);
+  });
+</script>
+
+</body>
+</html>
